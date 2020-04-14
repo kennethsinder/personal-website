@@ -1,17 +1,29 @@
 body {
-    text-align: center;
-    font-family: "Open Sans", sans-serif;
+  padding-top: 20px;
+  text-align: center;
+  font-family: "Open Sans", sans-serif;
 }
 
 h1 {
-    margin-top: 30px;
+  margin-top: 10px;
 }
 
 a {
-    color: #6495ed;
-    text-decoration: none;
+  color: #6495ed;
+  text-decoration: none;
 }
 
-div {
-    margin: 15px;
+.a-container {
+  margin: 15px;
+}
+
+p {
+  padding-bottom: 20px;
+}
+
+#img_me {
+  max-width: 200px;
+  height: auto;
+  max-height: 95vh;
+  border-radius: 50%;
 }
