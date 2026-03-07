@@ -1,41 +1,518 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" x-data="{ darkMode: localStorage.getItem('darkMode') === 'true' || (!localStorage.getItem('darkMode') && window.matchMedia('(prefers-color-scheme: dark)').matches) }" :class="{ 'dark': darkMode }">
 
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kenneth Sinder</title>
-  <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans" />
-  <link rel="stylesheet" type="text/css" href="styles.css">
+  <meta name="description" content="Kenneth Sinder - Software Engineer at Notion. Previously at Stripe. Israeli-Canadian based in San Francisco.">
   <link rel="shortcut icon" type="image/png" href="/favicon.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+          },
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <style>
+    [x-cloak] { display: none !important; }
+
+    /* Smooth tab transitions */
+    .tab-content { animation: fadeIn 0.3s ease-in-out; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Accordion transition */
+    .accordion-body {
+      overflow: hidden;
+      transition: max-height 0.35s ease, opacity 0.25s ease;
+    }
+
+    /* Subtle gradient border on profile image */
+    .profile-ring {
+      background: linear-gradient(135deg, #6366f1, #8b5cf6, #a78bfa);
+      padding: 3px;
+      border-radius: 9999px;
+      display: inline-block;
+    }
+
+    /* Hover lift effect */
+    .hover-lift {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .hover-lift:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.15);
+    }
+    .dark .hover-lift:hover {
+      box-shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Active tab indicator */
+    .tab-active {
+      position: relative;
+    }
+    .tab-active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #6366f1, #8b5cf6);
+      border-radius: 2px 2px 0 0;
+    }
+
+    /* Scrollbar styling */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+    .dark ::-webkit-scrollbar-thumb { background: #4b5563; }
+
+    /* Print styles for resume */
+    @media print {
+      .no-print { display: none !important; }
+      .dark { background: white !important; color: black !important; }
+    }
+  </style>
 </head>
 
-<body>
-  <div>
-    <img id="img_me" src="me.png" />
-  </div>
-  <h1>Kenneth Sinder</h1>
-  <p>🇮🇱🇨🇦 Israeli-Canadian software engineer living in San Francisco, California 🇺🇸.</p>
-  <p>Currently working at Notion on our public API.</p>
-  <p>Previously worked on <a href="https://stripe.com/billing">Stripe Billing</a>, helping online businesses build recurring revenue.</p>
-  <p>I dabble in personal finance, running, making awesome jokes, &
-    writing. I 💛 listening to indie tunes and synthpop on Spotify.</p>
-  <hr />
-  <p><strong>Connect with me</strong>:</p>
-  <div class="a-container">
-    <a href="resume.pdf">My resumé</a>
-  </div>
-  <div class="a-container">
-    <a href="https://linkedin.com/in/ksinder/">LinkedIn</a>
-  </div>
-  <div class="a-container">
-    <a href="https://twitter.com/KennethSinder">Twitter</a>
-  </div>
-  <div class="a-container">
-    <a href="https://github.com/kennethsinder">GitHub</a>
-  </div>
-  <div class="a-container">
-    <a href="https://medium.com/@kennethsinder_25424">Blog posts on Medium!</a>
-  </div>
+<body class="bg-gray-50 dark:bg-gray-950 text-gray-800 dark:text-gray-200 transition-colors duration-300 min-h-screen">
+
+  <!-- Top bar -->
+  <nav class="no-print sticky top-0 z-50 backdrop-blur-md bg-white/80 dark:bg-gray-900/80 border-b border-gray-200 dark:border-gray-800">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+      <span class="font-semibold text-lg tracking-tight">
+        <span class="text-indigo-600 dark:text-indigo-400">K</span>enneth Sinder
+      </span>
+      <button
+        @click="darkMode = !darkMode; localStorage.setItem('darkMode', darkMode)"
+        class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+        :aria-label="darkMode ? 'Switch to light mode' : 'Switch to dark mode'"
+      >
+        <i x-show="!darkMode" data-lucide="moon" class="w-5 h-5"></i>
+        <i x-show="darkMode" data-lucide="sun" class="w-5 h-5"></i>
+      </button>
+    </div>
+  </nav>
+
+  <main class="max-w-3xl mx-auto px-4 sm:px-6 py-8" x-data="{ tab: 'about' }">
+
+    <!-- Hero section -->
+    <section class="text-center mb-8">
+      <div class="profile-ring mx-auto w-fit mb-5">
+        <img src="me.png" alt="Kenneth Sinder" class="w-36 h-36 rounded-full object-cover bg-white dark:bg-gray-900" />
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-bold tracking-tight mb-2">Kenneth Sinder</h1>
+      <p class="text-gray-500 dark:text-gray-400 text-lg">Software Engineer at <span class="font-medium text-gray-700 dark:text-gray-300">Notion</span></p>
+      <div class="flex items-center justify-center gap-3 mt-4">
+        <a href="https://github.com/kennethsinder" target="_blank" rel="noopener" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-500 hover:text-gray-800 dark:hover:text-gray-200">
+          <i data-lucide="github" class="w-5 h-5"></i>
+        </a>
+        <a href="https://linkedin.com/in/ksinder/" target="_blank" rel="noopener" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-500 hover:text-gray-800 dark:hover:text-gray-200">
+          <i data-lucide="linkedin" class="w-5 h-5"></i>
+        </a>
+        <a href="https://twitter.com/KennethSinder" target="_blank" rel="noopener" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-500 hover:text-gray-800 dark:hover:text-gray-200">
+          <i data-lucide="twitter" class="w-5 h-5"></i>
+        </a>
+        <a href="https://medium.com/@ksinder" target="_blank" rel="noopener" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-500 hover:text-gray-800 dark:hover:text-gray-200">
+          <i data-lucide="pen-line" class="w-5 h-5"></i>
+        </a>
+        <a href="resume.pdf" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-500 hover:text-gray-800 dark:hover:text-gray-200" title="Download PDF resume">
+          <i data-lucide="file-text" class="w-5 h-5"></i>
+        </a>
+      </div>
+    </section>
+
+    <!-- Tabs -->
+    <div class="no-print border-b border-gray-200 dark:border-gray-800 mb-6">
+      <div class="flex gap-1" role="tablist">
+        <template x-for="t in [{id:'about', label:'About', icon:'user'}, {id:'resume', label:'Resume', icon:'briefcase'}, {id:'links', label:'Links', icon:'link'}]">
+          <button
+            role="tab"
+            :aria-selected="tab === t.id"
+            @click="tab = t.id"
+            :class="tab === t.id ? 'tab-active text-indigo-600 dark:text-indigo-400 font-medium' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-400'"
+            class="px-4 py-2.5 text-sm transition-colors rounded-t-lg flex items-center gap-2"
+          >
+            <i :data-lucide="t.icon" class="w-4 h-4"></i>
+            <span x-text="t.label"></span>
+          </button>
+        </template>
+      </div>
+    </div>
+
+    <!-- About Tab -->
+    <div x-show="tab === 'about'" class="tab-content" x-transition>
+      <div class="space-y-6">
+        <div class="bg-white dark:bg-gray-900 rounded-xl p-6 border border-gray-200 dark:border-gray-800 hover-lift">
+          <p class="text-lg leading-relaxed mb-4">
+            Israeli-Canadian software engineer living in San Francisco, California.
+          </p>
+          <p class="leading-relaxed mb-4">
+            Currently working at <a href="https://developers.notion.com/" class="text-indigo-600 dark:text-indigo-400 hover:underline font-medium">Notion</a> on the public API, building tools that help people organize their work and lives.
+          </p>
+          <p class="leading-relaxed mb-4">
+            Previously worked on <a href="https://stripe.com/billing" class="text-indigo-600 dark:text-indigo-400 hover:underline font-medium">Stripe Billing</a> for over 4 years, helping online businesses build recurring revenue.
+          </p>
+          <p class="leading-relaxed">
+            I dabble in personal finance, running, making awesome jokes, &amp; writing. I love listening to indie tunes and synthpop on Spotify.
+          </p>
+        </div>
+
+        <div class="bg-white dark:bg-gray-900 rounded-xl p-6 border border-gray-200 dark:border-gray-800 hover-lift">
+          <h3 class="font-semibold text-sm uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-3">Quick Facts</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+            <div class="flex items-center gap-2">
+              <i data-lucide="map-pin" class="w-4 h-4 text-indigo-500"></i>
+              <span>San Francisco, CA</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <i data-lucide="building-2" class="w-4 h-4 text-indigo-500"></i>
+              <span>Notion</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <i data-lucide="graduation-cap" class="w-4 h-4 text-indigo-500"></i>
+              <span>BASc Software Eng, Waterloo</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <i data-lucide="code-2" class="w-4 h-4 text-indigo-500"></i>
+              <span>APIs, Billing, Infrastructure</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resume Tab -->
+    <div x-show="tab === 'resume'" class="tab-content" x-transition x-data="{ openSection: 'notion' }">
+
+      <!-- Summary -->
+      <div class="bg-white dark:bg-gray-900 rounded-xl p-6 border border-gray-200 dark:border-gray-800 mb-4">
+        <h2 class="text-xl font-bold mb-2">Summary</h2>
+        <p class="text-gray-600 dark:text-gray-400">
+          Software engineer with >6 years of experience. Passionate about API design and debugging.
+        </p>
+        <div class="mt-3 flex flex-wrap gap-2">
+          <span class="text-xs px-2.5 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 font-medium">Python</span>
+          <span class="text-xs px-2.5 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 font-medium">Ruby</span>
+          <span class="text-xs px-2.5 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 font-medium">JavaScript</span>
+          <span class="text-xs px-2.5 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 font-medium">TypeScript</span>
+          <span class="text-xs px-2.5 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 font-medium">Java</span>
+          <span class="text-xs px-2.5 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 font-medium">C#</span>
+          <span class="text-xs px-2.5 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 font-medium">C++</span>
+          <span class="text-xs px-2.5 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 font-medium">Scala</span>
+          <span class="text-xs px-2.5 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 font-medium">React</span>
+          <span class="text-xs px-2.5 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 font-medium">Django</span>
+          <span class="text-xs px-2.5 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 font-medium">REST APIs</span>
+          <span class="text-xs px-2.5 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 font-medium">Angular</span>
+          <span class="text-xs px-2.5 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 font-medium">Vue</span>
+          <span class="text-xs px-2.5 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 font-medium">Flask</span>
+          <span class="text-xs px-2.5 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 font-medium">Laravel</span>
+        </div>
+      </div>
+
+      <!-- Experience -->
+      <h2 class="text-xl font-bold mb-3 mt-6">Experience</h2>
+      <div class="space-y-3">
+
+        <!-- Notion -->
+        <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden hover-lift">
+          <button @click="openSection = openSection === 'notion' ? null : 'notion'" class="w-full px-6 py-4 flex items-center justify-between text-left">
+            <div class="flex items-center gap-3">
+              <img src="logos/notion.png" alt="Notion" class="w-9 h-9 rounded-lg flex-shrink-0">
+              <div>
+                <h3 class="font-semibold">Software Engineer &middot; Notion</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400">San Francisco, CA &middot; Dec 2024 &ndash; Present</p>
+              </div>
+            </div>
+            <i data-lucide="chevron-down" class="w-5 h-5 text-gray-400 transition-transform duration-300" :class="openSection === 'notion' && 'rotate-180'"></i>
+          </button>
+          <div x-show="openSection === 'notion'" x-collapse>
+            <div class="px-6 pb-4 text-sm text-gray-600 dark:text-gray-400">
+              <ul class="list-disc list-inside space-y-1.5">
+                <li>Working on the foundations and implementation of Notion's Public API.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stripe -->
+        <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden hover-lift">
+          <button @click="openSection = openSection === 'stripe' ? null : 'stripe'" class="w-full px-6 py-4 flex items-center justify-between text-left">
+            <div class="flex items-center gap-3">
+              <img src="logos/stripe.png" alt="Stripe" class="w-9 h-9 rounded-lg flex-shrink-0">
+              <div>
+                <h3 class="font-semibold">Software Engineer &middot; Stripe</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400">South San Francisco, CA &middot; June 2020 &ndash; Nov 2024</p>
+              </div>
+            </div>
+            <i data-lucide="chevron-down" class="w-5 h-5 text-gray-400 transition-transform duration-300" :class="openSection === 'stripe' && 'rotate-180'"></i>
+          </button>
+          <div x-show="openSection === 'stripe'" x-collapse>
+            <div class="px-6 pb-4 text-sm text-gray-600 dark:text-gray-400">
+              <ul class="list-disc list-inside space-y-1.5">
+                <li>Built new business models and enterprise contract management support into Stripe Billing.</li>
+                <li>Designed and implemented Stripe Tax integration for subscriptions and invoices.</li>
+                <li>Evolving and maintaining high-volume global recurring revenue APIs and infrastructure.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- LinkedIn -->
+        <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden hover-lift">
+          <button @click="openSection = openSection === 'linkedin' ? null : 'linkedin'" class="w-full px-6 py-4 flex items-center justify-between text-left">
+            <div class="flex items-center gap-3">
+              <img src="logos/linkedin.png" alt="LinkedIn" class="w-9 h-9 rounded-lg flex-shrink-0">
+              <div>
+                <h3 class="font-semibold">Systems and Infrastructure Engineer Intern &middot; LinkedIn</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Sunnyvale, CA &middot; Fall 2019</p>
+              </div>
+            </div>
+            <i data-lucide="chevron-down" class="w-5 h-5 text-gray-400 transition-transform duration-300" :class="openSection === 'linkedin' && 'rotate-180'"></i>
+          </button>
+          <div x-show="openSection === 'linkedin'" x-collapse>
+            <div class="px-6 pb-4 text-sm text-gray-600 dark:text-gray-400">
+              <ul class="list-disc list-inside space-y-1.5">
+                <li>Designed API for storing metadata for third-party to LinkedIn HDFS big data ingestion.</li>
+                <li>Created customizable web UI internal tool for collecting Q&amp;A answers and metadata.</li>
+                <li class="ml-4 list-none">&mdash; Reduced time to onboard new data integrations from months to days.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stripe Intern -->
+        <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden hover-lift">
+          <button @click="openSection = openSection === 'stripe-intern' ? null : 'stripe-intern'" class="w-full px-6 py-4 flex items-center justify-between text-left">
+            <div class="flex items-center gap-3">
+              <img src="logos/stripe.png" alt="Stripe" class="w-9 h-9 rounded-lg flex-shrink-0">
+              <div>
+                <h3 class="font-semibold">Engineering Intern &middot; Stripe</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400">San Francisco, CA &middot; Winter 2019</p>
+              </div>
+            </div>
+            <i data-lucide="chevron-down" class="w-5 h-5 text-gray-400 transition-transform duration-300" :class="openSection === 'stripe-intern' && 'rotate-180'"></i>
+          </button>
+          <div x-show="openSection === 'stripe-intern'" x-collapse>
+            <div class="px-6 pb-4 text-sm text-gray-600 dark:text-gray-400">
+              <ul class="list-disc list-inside space-y-1.5">
+                <li>Interned on the Stripe Billing team.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Wish -->
+        <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden hover-lift">
+          <button @click="openSection = openSection === 'wish' ? null : 'wish'" class="w-full px-6 py-4 flex items-center justify-between text-left">
+            <div class="flex items-center gap-3">
+              <img src="logos/wish.png" alt="Wish" class="w-9 h-9 rounded-lg flex-shrink-0">
+              <div>
+                <h3 class="font-semibold">Software Engineering Intern &middot; Wish</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400">San Francisco, CA &middot; Summer 2018</p>
+              </div>
+            </div>
+            <i data-lucide="chevron-down" class="w-5 h-5 text-gray-400 transition-transform duration-300" :class="openSection === 'wish' && 'rotate-180'"></i>
+          </button>
+          <div x-show="openSection === 'wish'" x-collapse>
+            <div class="px-6 pb-4 text-sm text-gray-600 dark:text-gray-400">
+              <ul class="list-disc list-inside space-y-1.5">
+                <li>Worked on the Wish e-commerce platform.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hootsuite -->
+        <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden hover-lift">
+          <button @click="openSection = openSection === 'hootsuite' ? null : 'hootsuite'" class="w-full px-6 py-4 flex items-center justify-between text-left">
+            <div class="flex items-center gap-3">
+              <img src="logos/hootsuite.png" alt="Hootsuite" class="w-9 h-9 rounded-lg flex-shrink-0">
+              <div>
+                <h3 class="font-semibold">Full-Stack Software Developer &middot; Hootsuite</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Vancouver, Canada &middot; Fall 2017</p>
+              </div>
+            </div>
+            <i data-lucide="chevron-down" class="w-5 h-5 text-gray-400 transition-transform duration-300" :class="openSection === 'hootsuite' && 'rotate-180'"></i>
+          </button>
+          <div x-show="openSection === 'hootsuite'" x-collapse>
+            <div class="px-6 pb-4 text-sm text-gray-600 dark:text-gray-400">
+              <ul class="list-disc list-inside space-y-1.5">
+                <li>Full-stack development on the Hootsuite social media management platform.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tangam -->
+        <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden hover-lift">
+          <button @click="openSection = openSection === 'tangam' ? null : 'tangam'" class="w-full px-6 py-4 flex items-center justify-between text-left">
+            <div class="flex items-center gap-3">
+              <img src="logos/tangam.png" alt="Tangam Systems" class="w-9 h-9 rounded-lg flex-shrink-0">
+              <div>
+                <h3 class="font-semibold">Software Developer &middot; Tangam Systems</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Waterloo, Canada &middot; Winter 2017</p>
+              </div>
+            </div>
+            <i data-lucide="chevron-down" class="w-5 h-5 text-gray-400 transition-transform duration-300" :class="openSection === 'tangam' && 'rotate-180'"></i>
+          </button>
+          <div x-show="openSection === 'tangam'" x-collapse>
+            <div class="px-6 pb-4 text-sm text-gray-600 dark:text-gray-400">
+              <ul class="list-disc list-inside space-y-1.5">
+                <li>Developed software for casino floor optimization.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- CANARIE -->
+        <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden hover-lift">
+          <button @click="openSection = openSection === 'canarie' ? null : 'canarie'" class="w-full px-6 py-4 flex items-center justify-between text-left">
+            <div class="flex items-center gap-3">
+              <img src="logos/canarie.png" alt="CANARIE" class="w-9 h-9 rounded-lg flex-shrink-0">
+              <div>
+                <h3 class="font-semibold">Software Developer &middot; CANARIE</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Ottawa, Canada &middot; Summer 2016</p>
+              </div>
+            </div>
+            <i data-lucide="chevron-down" class="w-5 h-5 text-gray-400 transition-transform duration-300" :class="openSection === 'canarie' && 'rotate-180'"></i>
+          </button>
+          <div x-show="openSection === 'canarie'" x-collapse>
+            <div class="px-6 pb-4 text-sm text-gray-600 dark:text-gray-400">
+              <ul class="list-disc list-inside space-y-1.5">
+                <li>Developed software for Canada's national research and education network.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Education -->
+      <h2 class="text-xl font-bold mb-3 mt-6">Education</h2>
+      <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden hover-lift">
+        <button @click="openSection = openSection === 'education' ? null : 'education'" class="w-full px-6 py-4 flex items-center justify-between text-left">
+          <div class="flex items-center gap-3">
+            <img src="logos/waterloo.png" alt="University of Waterloo" class="w-9 h-9 rounded-lg flex-shrink-0">
+            <div>
+              <h3 class="font-semibold">Bachelor of Software Engineering &middot; University of Waterloo</h3>
+              <p class="text-sm text-gray-500 dark:text-gray-400">Canada &middot; 2015 &ndash; 2020</p>
+            </div>
+          </div>
+          <i data-lucide="chevron-down" class="w-5 h-5 text-gray-400 transition-transform duration-300" :class="openSection === 'education' && 'rotate-180'"></i>
+        </button>
+        <div x-show="openSection === 'education'" x-collapse>
+          <div class="px-6 pb-4 text-sm text-gray-600 dark:text-gray-400">
+            <ul class="list-disc list-inside space-y-1.5">
+              <li>Attained Dean's Honours List every term for consistently averaging in top 10%.</li>
+              <li>Learned C, C++, Scala, OCaml, and Assembly (MIPS/ARM) in regular and enriched courses.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6 text-center">
+        <a href="resume.pdf" class="inline-flex items-center gap-2 text-sm text-indigo-600 dark:text-indigo-400 hover:underline font-medium">
+          <i data-lucide="download" class="w-4 h-4"></i>
+          Download PDF version
+        </a>
+      </div>
+    </div>
+
+    <!-- Links Tab -->
+    <div x-show="tab === 'links'" class="tab-content" x-transition>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+
+        <a href="https://github.com/kennethsinder" target="_blank" rel="noopener"
+          class="bg-white dark:bg-gray-900 rounded-xl p-5 border border-gray-200 dark:border-gray-800 hover-lift flex items-center gap-4 group">
+          <div class="w-10 h-10 rounded-lg bg-gray-900 dark:bg-white flex items-center justify-center flex-shrink-0">
+            <i data-lucide="github" class="w-5 h-5 text-white dark:text-gray-900"></i>
+          </div>
+          <div>
+            <div class="font-medium group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">GitHub</div>
+            <div class="text-sm text-gray-500">@kennethsinder</div>
+          </div>
+          <i data-lucide="arrow-up-right" class="w-4 h-4 ml-auto text-gray-300 dark:text-gray-600 group-hover:text-indigo-500 transition-colors"></i>
+        </a>
+
+        <a href="https://linkedin.com/in/ksinder/" target="_blank" rel="noopener"
+          class="bg-white dark:bg-gray-900 rounded-xl p-5 border border-gray-200 dark:border-gray-800 hover-lift flex items-center gap-4 group">
+          <div class="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center flex-shrink-0">
+            <i data-lucide="linkedin" class="w-5 h-5 text-white"></i>
+          </div>
+          <div>
+            <div class="font-medium group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">LinkedIn</div>
+            <div class="text-sm text-gray-500">@ksinder</div>
+          </div>
+          <i data-lucide="arrow-up-right" class="w-4 h-4 ml-auto text-gray-300 dark:text-gray-600 group-hover:text-indigo-500 transition-colors"></i>
+        </a>
+
+        <a href="https://twitter.com/KennethSinder" target="_blank" rel="noopener"
+          class="bg-white dark:bg-gray-900 rounded-xl p-5 border border-gray-200 dark:border-gray-800 hover-lift flex items-center gap-4 group">
+          <div class="w-10 h-10 rounded-lg bg-sky-500 flex items-center justify-center flex-shrink-0">
+            <i data-lucide="twitter" class="w-5 h-5 text-white"></i>
+          </div>
+          <div>
+            <div class="font-medium group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">Twitter</div>
+            <div class="text-sm text-gray-500">@KennethSinder</div>
+          </div>
+          <i data-lucide="arrow-up-right" class="w-4 h-4 ml-auto text-gray-300 dark:text-gray-600 group-hover:text-indigo-500 transition-colors"></i>
+        </a>
+
+        <a href="https://medium.com/@ksinder" target="_blank" rel="noopener"
+          class="bg-white dark:bg-gray-900 rounded-xl p-5 border border-gray-200 dark:border-gray-800 hover-lift flex items-center gap-4 group">
+          <div class="w-10 h-10 rounded-lg bg-gray-800 dark:bg-gray-200 flex items-center justify-center flex-shrink-0">
+            <i data-lucide="pen-line" class="w-5 h-5 text-white dark:text-gray-900"></i>
+          </div>
+          <div>
+            <div class="font-medium group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">Medium</div>
+            <div class="text-sm text-gray-500">Blog posts</div>
+          </div>
+          <i data-lucide="arrow-up-right" class="w-4 h-4 ml-auto text-gray-300 dark:text-gray-600 group-hover:text-indigo-500 transition-colors"></i>
+        </a>
+
+        <a href="resume.pdf"
+          class="bg-white dark:bg-gray-900 rounded-xl p-5 border border-gray-200 dark:border-gray-800 hover-lift flex items-center gap-4 group sm:col-span-2">
+          <div class="w-10 h-10 rounded-lg bg-indigo-600 flex items-center justify-center flex-shrink-0">
+            <i data-lucide="file-text" class="w-5 h-5 text-white"></i>
+          </div>
+          <div>
+            <div class="font-medium group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">Resume (PDF)</div>
+            <div class="text-sm text-gray-500">Download my full resume</div>
+          </div>
+          <i data-lucide="download" class="w-4 h-4 ml-auto text-gray-300 dark:text-gray-600 group-hover:text-indigo-500 transition-colors"></i>
+        </a>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="no-print max-w-3xl mx-auto px-4 sm:px-6 py-8 text-center text-sm text-gray-400 dark:text-gray-600">
+    &copy; 2026 Kenneth Sinder
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => lucide.createIcons());
+    document.addEventListener('alpine:initialized', () => lucide.createIcons());
+  </script>
 </body>
 
 </html>
