@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<!--
+  Source of truth for resume.pdf. Regenerate after editing:
+  "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --no-pdf-header-footer \
+    --print-to-pdf=resume.pdf --virtual-time-budget=5000 "file://$PWD/resume.html"
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Kenneth Sinder - Resume</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    @page { size: Letter; margin: 0.55in 0.7in; }
+    * { box-sizing: border-box; }
+    body { font-family: Lato, "Helvetica Neue", Arial, sans-serif; font-size: 10.2pt; line-height: 1.32; color: #111; margin: 0; }
+    h1 { font-size: 20pt; font-weight: 400; text-align: center; margin: 0 0 2pt; }
+    .contact { text-align: center; margin-bottom: 4pt; }
+    h2 { font-size: 13.5pt; font-weight: 400; margin: 10pt 0 3pt; border-bottom: 0.6pt solid #bbb; padding-bottom: 1pt; }
+    p { margin: 0 0 3pt; }
+    .role { margin: 6pt 0 1pt; }
+    .role b { font-weight: 700; }
+    .sub { color: #444; font-style: italic; margin: 0 0 1pt; }
+    ul { margin: 1pt 0 0; padding-left: 16pt; }
+    li { margin: 0 0 1.5pt; }
+    a { color: inherit; text-decoration: none; }
+    .compact .role { margin: 2.5pt 0 0; }
+  </style>
+</head>
+<body>
+  <h1>Kenneth Sinder</h1>
+  <div class="contact">
+    <a href="https://ksinder.com">ksinder.com</a> &middot; LinkedIn: <b>ksinder</b> &middot; GitHub: <b>kennethsinder</b>
+  </div>
+
+  <h2>Summary</h2>
+  <p>Senior software engineer with 7+ years building APIs and developer platforms at Notion and Stripe. Focused on AI&#8209;native developer surfaces: MCP, agent tooling, and authorization standards for agents.</p>
+  <p><b>Languages</b>: TypeScript, JavaScript, Python, Ruby, Java, Scala, C, C++.<br>
+     <b>Platforms</b>: REST APIs, Model Context Protocol (MCP), OAuth 2.1, Cross App Access (ID-JAG), webhooks, Node.js, React.</p>
+
+  <h2>Experience</h2>
+  <p class="role"><b>Senior Software Engineer</b> &middot; <b>Notion</b> &middot; <i>San Francisco, CA</i> &middot; Dec 2024 &ndash; present</p>
+  <p class="sub">Developer Interfaces (formerly Public API), Developer Platform &amp; Connections. Promoted to Senior (L4) in 2025.</p>
+  <ul>
+    <li>Shipped Notion MCP, Notion&rsquo;s patent-pending hosted remote MCP server, now central to Notion&rsquo;s agent strategy. Partnered with OpenAI, Anthropic, and Cursor on launch integrations.</li>
+    <li>Made Notion MCP 2x faster in one month (Oct 2026), also cutting Notion API event-loop delay by over 90%.</li>
+    <li>Lead Tool Core: one shared tool module and execution engine behind the Notion API, MCP, CLI, and Custom Agents, so product teams build a tool once and it behaves the same on every surface.</li>
+    <li>Built Notion&rsquo;s MCP App, embedding Notion as an interactive sidebar inside ChatGPT.</li>
+    <li>Shipped Enterprise Managed Authorization (Okta Cross App Access) for Notion MCP with Anthropic and Okta.</li>
+    <li>Shipped the File Upload API and integration webhooks, strengthening the platform&rsquo;s foundations.</li>
+    <li>Consistently recognized for top-decile engineering velocity; gave an internal talk to early-career engineers on working effectively.</li>
+  </ul>
+
+  <p class="role"><b>Software Engineer</b> &middot; <b>Stripe</b> &middot; <i>South San Francisco, CA</i> &middot; June 2020 &ndash; Nov 2024</p>
+  <ul>
+    <li>Built new business models and enterprise contract management support into Stripe Billing.</li>
+    <li>Designed and implemented Stripe Tax integration for subscriptions and invoices.</li>
+    <li>Evolved and maintained high-volume global recurring revenue APIs and infrastructure.</li>
+  </ul>
+
+  <p class="role"><b>Systems and Infrastructure Engineer Intern</b> &middot; <b>LinkedIn</b> &middot; <i>Sunnyvale, CA</i> &middot; Fall 2019</p>
+  <ul>
+    <li>Designed API for storing metadata for third-party &rarr; LinkedIn HDFS big data ingestion.</li>
+    <li>Built an internal web tool for onboarding data integrations, cutting onboarding from months to days.</li>
+  </ul>
+
+  <div class="compact">
+    <p class="role"><b>Engineering Intern</b> &middot; <b>Stripe</b> &middot; <i>San Francisco, CA</i> &middot; Winter 2019</p>
+    <p class="role"><b>Software Engineering Intern</b> &middot; <b>Wish</b> &middot; <i>San Francisco, CA</i> &middot; Summer 2018</p>
+    <p class="role"><b>Full-Stack Software Developer</b> &middot; <b>Hootsuite</b> &middot; <i>Vancouver, Canada</i> &middot; Fall 2017</p>
+    <p class="role"><b>Software Developer</b> &middot; <b>Tangam Systems</b> &middot; <i>Waterloo, Canada</i> &middot; Winter 2017</p>
+    <p class="role"><b>Software Developer</b> &middot; <b>CANARIE</b> &middot; <i>Ottawa, Canada</i> &middot; Summer 2016</p>
+  </div>
+
+  <h2>Speaking, Writing &amp; Community</h2>
+  <ul>
+    <li>Speaker for Notion at WorkOS MCP Night 2.0 (San Francisco, 2025) and Postman&rsquo;s Agents &amp; APIs Developer Meetup (New York, 2026).</li>
+    <li>Author, &ldquo;Notion&rsquo;s hosted MCP server: an inside look&rdquo; (Notion engineering blog, 2025).</li>
+    <li>Worked with Cloudflare on workers-oauth-provider improvements; contributor to MCP, A2A, and ACP communities and to the IETF OAuth identity assertion grant (ID-JAG) draft.</li>
+  </ul>
+
+  <h2>Education</h2>
+  <p class="role"><b>Bachelor of Software Engineering, University of Waterloo</b> &middot; <i>Canada</i> &middot; 2015 &ndash; 2020</p>
+  <ul>
+    <li>Dean&rsquo;s Honours List every term for consistently averaging in the top 10%.</li>
+  </ul>
+</body>
+</html>
